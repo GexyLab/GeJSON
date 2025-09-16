@@ -1,0 +1,266 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenLab.GeJSON
+{
+    public class JPair
+    {
+        #region Variables
+
+        public string? Key { get; }
+        public dynamic Value { get; set; }
+
+        #endregion
+
+        #region Contructor
+
+        public JPair(string key)
+        {
+            this.Key = key;
+        }
+
+        public JPair()
+        {
+            this.Key = null;
+            this.Value = null;
+        }
+
+        public JPair(string key, JObject value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+
+        public JPair(string key, JArray value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+
+        public JPair(string key, string value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public JPair(string key, int value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public JPair(string key, long value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public JPair(string key, float value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public JPair(string key, bool value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public JPair(string key, object value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+
+        #endregion
+
+        #region Type
+
+        public JType getType()
+        {
+            if (Value is JObject)
+            {
+                return JType.Object;
+            }
+            else if (Value is JArray)
+            {
+                return JType.Array;
+            }
+            else if (Value is string)
+            {
+                return JType.String;
+            }
+            else if (Value is byte)
+            {
+                return JType.Byte;
+            }
+            else if (Value is short)
+            {
+                return JType.Short;
+            }
+            else if (Value is int)
+            {
+                return JType.Integer;
+            }
+            else if (Value is long)
+            {
+                return JType.Long;
+            }
+            else if (Value is float)
+            {
+                return JType.Float;
+            }
+            else if (Value is double)
+            {
+                return JType.Double;
+            }
+            else if (Value is decimal)
+            {
+                return JType.Decimal;
+            }
+            else if (Value is bool)
+            {
+                return JType.Boolean;
+            }
+            else if (Value is object)
+            {
+                return JType.Class;
+            }
+            else
+            {
+                return JType.Unknown;
+
+            }
+        }
+
+        #endregion
+
+        #region manage
+
+        public bool Empty()
+        {
+            if(Value != null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        #endregion
+
+        public string ToSerializedString()
+        {
+            string o = "";
+
+            if (Key != null) { o += "\"" + Key + "\":"; }
+
+            switch (getType())
+            {
+                case JType.Object:
+                    o += ((JObject)Value).Minify();
+                    break;
+                case JType.Array:
+                    o += ((JArray)Value).Minify();
+                    break;
+                case JType.String:
+                    o += "\"" + (string)Value + "\"";
+                    break;
+                case JType.Byte:
+                    o += (byte)Value;
+                    break;
+                case JType.Short:
+                    o += (short)Value;
+                    break;
+                case JType.Integer:
+                    o += (int)Value;
+                    break;
+                case JType.Long:
+                    o += (long)Value;
+                    break;
+                case JType.Float:
+                    o += (float)Value;
+                    break;
+                case JType.Double:
+                    o += (double)Value;
+                    break;
+                case JType.Decimal:
+                    o += (decimal)Value;
+                    break;
+                case JType.Boolean:
+                    o += (bool)Value;
+                    break;
+                case JType.Class:
+                    o += ((object)Value).GetType().ToString();
+                    break;
+                case JType.Unknown:
+                    o += ((object)Value).ToString();
+                    break;
+            }
+            return o;    
+        }
+
+        public string ToString(int leftReturn = 0, string spaceChar = " ")
+        {
+            string s = "";
+            for (int a = 0; a < leftReturn; a++)
+            {
+                s += spaceChar;
+            }
+
+            string n = Environment.NewLine;
+
+            string o = "";
+            if (Key != null) { o += s+"\"" + Key + "\": "; } else { o += s; }
+
+            switch (getType())
+            {
+                case JType.Object:
+                    o += n;
+                    o += ((JObject)Value).ToString(leftReturn + 1, spaceChar);
+                    break;
+                case JType.Array:
+                    o += n;
+                    o += ((JArray)Value).ToString(leftReturn + 1, spaceChar);
+                    break;
+                case JType.String:
+                    o += "\"" + (string)Value + "\"";
+                    break;
+                case JType.Byte:
+                    o += (byte)Value;
+                    break;
+                case JType.Short:
+                    o += (short)Value;
+                    break;
+                case JType.Integer:
+                    o += (int)Value;
+                    break;
+                case JType.Long:
+                    o += (long)Value;
+                    break;
+                case JType.Float:
+                    o += (float)Value;
+                    break;
+                case JType.Double:
+                    o += (double)Value;
+                    break;
+                case JType.Decimal:
+                    o += (decimal)Value;
+                    break;
+                case JType.Boolean:
+                    o += (bool)Value;
+                    break;
+                case JType.Class:
+                    o += ((object)Value).GetType().ToString();
+                    break;
+                case JType.Unknown:
+                    o += ((object)Value).ToString();
+                    break;
+            }
+
+            return o;
+        }
+    }
+}
