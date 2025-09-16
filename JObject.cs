@@ -70,7 +70,7 @@ namespace OpenLab.GeJSON
             var _parser = new Parser(_lexer);
 
             JObject j  = _parser.Parse() as JObject ?? new JObject();
-            content = j.getItems();
+            content = j.GetItems();
             if (j.Empty()) throw new Exception("Could not parse json string");
         }
 
@@ -205,7 +205,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public List<JPair> getItems()
+        public List<JPair> GetItems()
         {
             return content;
         }
@@ -367,28 +367,43 @@ namespace OpenLab.GeJSON
             string o = "{";
             foreach (JPair p in content)
             {
-                o += p.ToSerializedString();
+                o += p.Minify();
             }
             o += "}";
 
             return o;
         }
 
-        public string ToString(int leftReturn=0, string spaceChar = " ")
+        public string ToString(bool deep=true, int leftReturn=0, string spaceChar = " ")
         {
 
-            string s = "";
-            for(int a = 0; a < leftReturn; a++)
-            {
-                s += spaceChar;
-            }
+            string s = makeLeftReturn(leftReturn, spaceChar);
+            
 
             string n = Environment.NewLine;
             string o = s+"{"+n;
             int i = 0;
             foreach (JPair p in content)
             {
-                o += p.ToString(leftReturn+1, spaceChar);
+                if (deep)
+                {
+                    o += p.ToString(deep, leftReturn + 1, spaceChar);
+                }
+                else
+                {
+                    if(p.Value is JObject)
+                    {
+                        o += makeLeftReturn(leftReturn+1,spaceChar) + "\"" + p.Key+ "\" : " +p.GetJsonType();
+                    }else if(p.Value is JArray)
+                    {
+                        o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
+                    }
+                    else
+                    {
+                        o += p.ToString(deep, leftReturn + 1, spaceChar);
+                    }
+                    
+                }
                 if (i < content.Count - 1)
                 {
                     o += ",";
@@ -401,6 +416,16 @@ namespace OpenLab.GeJSON
             o += s+"}";
 
             return o;
+        }
+
+        private string makeLeftReturn(int leftReturn = 0, string spaceChar = " ")
+        {
+            string s = "";
+            for (int a = 0; a < leftReturn; a++)
+            {
+                s += spaceChar;
+            }
+            return s;
         }
 
         #endregion

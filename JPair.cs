@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenLab.GeJSON.parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -76,7 +77,7 @@ namespace OpenLab.GeJSON
 
         #region Type
 
-        public JType getType()
+        public JType GetJsonType()
         {
             if (Value is JObject)
             {
@@ -151,13 +152,19 @@ namespace OpenLab.GeJSON
 
         #endregion
 
-        public string ToSerializedString()
+        #region Parser token
+
+        public Token ParserToken { get; set; }
+
+        #endregion
+
+        public string Minify()
         {
             string o = "";
 
             if (Key != null) { o += "\"" + Key + "\":"; }
 
-            switch (getType())
+            switch (GetJsonType())
             {
                 case JType.Object:
                     o += ((JObject)Value).Minify();
@@ -202,28 +209,24 @@ namespace OpenLab.GeJSON
             return o;    
         }
 
-        public string ToString(int leftReturn = 0, string spaceChar = " ")
+        public string ToString(bool deep = true, int leftReturn = 0, string spaceChar = " ")
         {
-            string s = "";
-            for (int a = 0; a < leftReturn; a++)
-            {
-                s += spaceChar;
-            }
+            string s = makeLeftReturn(leftReturn, spaceChar);
 
             string n = Environment.NewLine;
 
             string o = "";
             if (Key != null) { o += s+"\"" + Key + "\": "; } else { o += s; }
 
-            switch (getType())
+            switch (GetJsonType())
             {
                 case JType.Object:
                     o += n;
-                    o += ((JObject)Value).ToString(leftReturn + 1, spaceChar);
+                    o += ((JObject)Value).ToString(deep,leftReturn + 1, spaceChar);
                     break;
                 case JType.Array:
                     o += n;
-                    o += ((JArray)Value).ToString(leftReturn + 1, spaceChar);
+                    o += ((JArray)Value).ToString(deep, leftReturn + 1, spaceChar);
                     break;
                 case JType.String:
                     o += "\"" + (string)Value + "\"";
@@ -261,6 +264,16 @@ namespace OpenLab.GeJSON
             }
 
             return o;
+        }
+
+        private string makeLeftReturn(int leftReturn = 0, string spaceChar = " ")
+        {
+            string s = "";
+            for (int a = 0; a < leftReturn; a++)
+            {
+                s += spaceChar;
+            }
+            return s;
         }
     }
 }

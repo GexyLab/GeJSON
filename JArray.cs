@@ -340,7 +340,7 @@
             int i = 0;
             foreach (JPair p in content)
             {
-                o += p.ToSerializedString();
+                o += p.Minify();
                 if (i < content.Count - 1)
                 {
                     o += ",";
@@ -352,33 +352,51 @@
             return o;
         }
 
-        public string ToString(int leftReturn = 0, string spaceChar = " ")
+        public string ToString(bool deep = true, int leftReturn = 0, string spaceChar = " ")
         {
             string n = Environment.NewLine;
-            string s = "";
-            for (int a = 0; a < leftReturn; a++)
-            {
-                s += spaceChar;
-            }
+            string s = makeLeftReturn(leftReturn, spaceChar);
 
             string o = s+"["+n;
             int i = 0;
             foreach (JPair p in content)
             {
-                o += p.ToString(leftReturn + 1, spaceChar);
+                if (p.Value is JObject)
+                {
+                    o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
+                }
+                else if (p.Value is JArray)
+                {
+                    o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
+                }
+                else
+                {
+                    o += p.ToString(deep, leftReturn + 1, spaceChar);
+                }
+
                 if (i < content.Count - 1)
                 {
-                    o += ","+n;
+                    o += "," + n;
                 }
                 else
                 {
                     o += n;
                 }
-                    i++;
+                i++;
             }
             o += s+"]";
 
             return o;
+        }
+
+        private string makeLeftReturn(int leftReturn = 0, string spaceChar = " ")
+        {
+            string s = "";
+            for (int a = 0; a < leftReturn; a++)
+            {
+                s += spaceChar;
+            }
+            return s;
         }
 
         #endregion

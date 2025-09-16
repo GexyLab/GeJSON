@@ -13,7 +13,7 @@ namespace OpenLab.GeJSON.validator
         public bool valid(JObject src) {
 
             int index;
-            for (index = 0; index < src.getItems().Count; index++)
+            for (index = 0; index < src.GetItems().Count; index++)
             {
                 // ****************************************************************************************************
                 // Elaborazione dello schema
@@ -30,15 +30,15 @@ namespace OpenLab.GeJSON.validator
                 }
                 catch (ArgumentNullException)
                 {
-                    throw new Exception("Schema error: Parameter \"Type\" is required for node " + src.getItems().ElementAt(0).ToString());
+                    throw new Exception("Schema error: Parameter \"Type\" is required for node " + src.GetItems().ElementAt(0).ToString());
                 }
 
                 //additionalProperties
                 // ----------------------------------------------------------------
                 bool additionalProperties=true;
-                JType additionalPropertiesType;
+                JType? additionalPropertiesType = null;
 
-                if (schema.Get("additionalProperties", "").getType() == JType.Object)
+                if (schema.Get("additionalProperties", "").GetJsonType() == JType.Object)
                 {
                     // è specificato il tipo di dato che devono avere le proprietà non esplicitamente dichiarate nello schema
                     additionalPropertiesType = convertTypeString(((JObject)schema.Get("additionalProperties").Value).Get("type").Value);
@@ -49,9 +49,11 @@ namespace OpenLab.GeJSON.validator
                     Console.WriteLine(additionalProperties.ToString());
                 }
 
+
+
                 //properties
                 // ----------------------------------------------------------------
-                JObject properties = schema.Get("properties", new JObject()).Value;
+                JObject sProperties = schema.Get("properties", new JObject()).Value;
 
                 // ****************************************************************************************************
                 // verifica oggetto di partenza
@@ -62,19 +64,47 @@ namespace OpenLab.GeJSON.validator
                  * ----------------------------------------------------------------------- */
                 if (type == JType.Object && src is not JObject)
                 {
-                    throw new Exception("The type is wrong, expected object but it's "+type);
+                    ValidatorException ex = new ValidatorException("The type is wrong, expected object but it's " + type);
+                    ex.jsonEntity = src;
+                    throw ex;
                 }
 
                 /* --------------------------------------------------------------------------
                  * verifica additionalProperties
                  * ----------------------------------------------------------------------- */
-                if (src.Size()>properties.Size() && !additionalProperties)
+                if (!additionalProperties)
                 {
-                    throw new Exception("Node not permit additional properties");
+                    // se additionalProperties = false
+                    if (src.Size() > sProperties.Size() )
+                    {
+                        // se additionalProperties = false && proprietà sorgente > proprietà schema
+                        ValidatorException ex = new ValidatorException("Node not permit additional properties");
+                        ex.jsonEntity = src;
+                        throw ex;
+                    }
+                }else if(additionalPropertiesType != null) 
+                {
+                    // se additionalProperties != false && additionalPropertiesType != null, contiene il tipo che possono avere le proprietà aggiuntive
+                    var ap = src.GetItems().Except(sProperties.GetItems());
+                    foreach(JPair p in ap)
+                    {
+                        if(p.GetJsonType() != additionalPropertiesType)
+                        {
+                            ValidatorException ex = new ValidatorException("Type of additional properties is not correct. Found "+ p.GetJsonType()+ " but expected "+ additionalPropertiesType);
+                            ex.jsonEntity = src;
+                            throw ex;
+                        }
+                    }
+
                 }
+
+                /* --------------------------------------------------------------------------
+                 * verifica minProperties e maxProperties
+                 * ----------------------------------------------------------------------- */
+
                 //currentSubject = src.getItems().ElementAt(index); // questo contiene i pair su cui fare la valutazione
-                
-                
+
+
 
 
 
@@ -83,6 +113,8 @@ namespace OpenLab.GeJSON.validator
 
             return true;
         }
+
+         
 
         JType convertTypeString(string typeStr)
         {
