@@ -1,5 +1,6 @@
 ﻿
 using OpenLab.GeJSON.parser;
+using OpenLab.GeJSON.validator;
 
 namespace OpenLab.GeJSON
 {
@@ -7,7 +8,7 @@ namespace OpenLab.GeJSON
     {
         #region Variables
 
-        List<JPair> content = new List<JPair>();
+        protected List<JPair> content = new List<JPair>();
 
         dynamic parentObject;
 
@@ -16,6 +17,11 @@ namespace OpenLab.GeJSON
         #region Contructor
 
         public JObject() {}
+
+        public JObject(JPair pair)
+        {
+            Add(pair.Key, pair.Value);
+        }
         public JObject(string key, JObject content) {
             Add(key, content);
         }
@@ -59,24 +65,22 @@ namespace OpenLab.GeJSON
         {
             Add(key, content);
         }
-        public JObject(JPair pair) {
-            content.Add(pair);
-        }
+     
         public JObject(string rawJson)
         {
             rawJson = rawJson ?? throw new ArgumentNullException(nameof(rawJson));
 
             var _lexer = new Lexer(rawJson);
-            var _parser = new Parser(_lexer);
+            var _parser = new Parser<JSchema>(_lexer);
 
             JObject j  = _parser.Parse() as JObject ?? new JObject();
-            content = j.GetItems();
+            content = j.GetProperties();
             if (j.Empty()) throw new Exception("Could not parse json string");
         }
 
         #endregion
 
-        #region Get value
+        #region Get property
 
         /// <summary>
         /// Return JPair that conain key and value of propertie, selected by key
@@ -84,7 +88,7 @@ namespace OpenLab.GeJSON
         /// <param name="key">String represent the key of property</param>
         /// <returns>Return the JPair that contain data or null if not exist</returns>
         /// <exception cref="ArgumentNullException">If object not contain property with the key which has been specified</exception>
-        public JPair Get(string key)
+        public JPair GetProperty(string key)
         {
             try
             {
@@ -96,7 +100,24 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, JObject defaultValue) 
+        /// <summary>
+        /// Return the JPair that contain key and value of property requeste by it's key. If the key not exist return null
+        /// </summary>
+        /// <param name="key">The key string of the property</param>
+        /// <returns>Return JPair that contain data or null</returns>
+        public JPair? GetPropertyOrNull(string key)
+        {
+            try
+            {
+                return content.Find(r => r.Key == key) ?? null;
+            }
+            catch (ArgumentNullException)
+            {
+                return null;
+            }
+        }
+
+        public JPair GetProperty(string key, JObject defaultValue) 
         {
             try
             {
@@ -108,7 +129,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, JArray defaultValue)
+        public JPair GetProperty(string key, JArray defaultValue)
         {
             try
             {
@@ -120,7 +141,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, int defaultValue)
+        public JPair GetProperty(string key, int defaultValue)
         {
             try
             {
@@ -132,7 +153,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, long defaultValue)
+        public JPair GetProperty(string key, long defaultValue)
         {
             try
             {
@@ -144,7 +165,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, float defaultValue)
+        public JPair GetProperty(string key, float defaultValue)
         {
             try
             {
@@ -156,7 +177,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, double defaultValue)
+        public JPair GetProperty(string key, double defaultValue)
         {
             try
             {
@@ -169,7 +190,7 @@ namespace OpenLab.GeJSON
         }
 
 
-        public JPair Get(string key, decimal defaultValue)
+        public JPair GetProperty(string key, decimal defaultValue)
         {
             try
             {
@@ -181,7 +202,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, bool defaultValue)
+        public JPair GetProperty(string key, bool defaultValue)
         {
             try
             {
@@ -193,7 +214,7 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JPair Get(string key, string defaultValue)
+        public JPair GetProperty(string key, string defaultValue)
         {
             try
             {
@@ -205,9 +226,196 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public List<JPair> GetItems()
+        public List<JPair> GetProperties()
         {
             return content;
+        }
+
+        #endregion
+
+        #region get values
+
+        public dynamic? GetValueOrNull(string key)
+        {
+            try
+            {
+                return content.Find(r => r.Key == key).Value ?? null;
+            }
+            catch (ArgumentNullException)
+            {
+                return null;
+            }
+        }
+
+        public dynamic? GetValue(string key)
+        {
+            try
+            {
+                return content.Find(r => r.Key == key).Value;
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+        }
+
+        public JObject GetValue(string key, JObject defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public JArray GetValue(string key, JArray defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public string GetValue(string key, string defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null) {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public byte GetValue(string key, byte defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public float GetValue(string key, float defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public double GetValue(string key, double defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public decimal GetValue(string key, decimal defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
+        }
+
+        public bool GetValue(string key, bool defaultValue)
+        {
+            try
+            {
+                JPair p = content.FirstOrDefault(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch (Exception)
+            {
+                return defaultValue;
+            }
         }
 
         #endregion
@@ -216,14 +424,13 @@ namespace OpenLab.GeJSON
 
         public bool Contains(string key)
         {
-            try
-            {
-                content.Find(r => r.Key == key);
-                return true;
-            }
-            catch (Exception)
+            if (content.Find(r => r.Key == key) == null)
             {
                 return false;
+            }
+            else
+            {
+                return true;
             }
         }
 
@@ -301,7 +508,7 @@ namespace OpenLab.GeJSON
             content.Add(p);
             return p;
         }
-
+       
         #endregion
 
         #region Remove item
@@ -433,6 +640,21 @@ namespace OpenLab.GeJSON
         #region Validation
 
         JSchema schema { get; set; }
+
+        public string schemaTitle;
+        public string schemaDescription;
+        public bool Validate(JSchema schema)
+        {
+            Validator validator = new Validator();
+            try
+            {
+                return validator.Validate(this, schema);
+            }
+            catch 
+            {
+                throw;
+            }
+        }
 
         #endregion
     }

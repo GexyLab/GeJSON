@@ -14,7 +14,8 @@
 
         public JArray() { }
 
-        public JArray(JObject content) {
+        public JArray(JObject content)
+        {
             Add(content);
         }
         public JArray(JArray content)
@@ -92,9 +93,9 @@
 
         #endregion
 
-        #region Get value
+        #region Get propertes
 
-        public JPair Get(int index)
+        public JPair GetItem(int index)
         {
             try
             {
@@ -106,7 +107,19 @@
             }
         }
 
-        public JPair Get(int index, JObject defaultValue)
+        public JPair GetItemOrNull(int index)
+        {
+            try
+            {
+                return content.ElementAt(index) ?? null;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return null;
+            }
+        }
+
+        public JPair GetItem(int index, JObject defaultValue)
         {
             try
             {
@@ -118,7 +131,7 @@
             }
         }
 
-        public JPair Get(int index, JArray defaultValue)
+        public JPair GetItem(int index, JArray defaultValue)
         {
             try
             {
@@ -130,7 +143,7 @@
             }
         }
 
-        public JPair Get(int index, int defaultValue)
+        public JPair GetItem(int index, int defaultValue)
         {
             try
             {
@@ -142,7 +155,7 @@
             }
         }
 
-        public JPair Get(int index, long defaultValue)
+        public JPair GetItem(int index, long defaultValue)
         {
             try
             {
@@ -154,7 +167,7 @@
             }
         }
 
-        public JPair Get(int index, float defaultValue)
+        public JPair GetItem(int index, float defaultValue)
         {
             try
             {
@@ -166,7 +179,7 @@
             }
         }
 
-        public JPair Get(int index, bool defaultValue)
+        public JPair GetItem(int index, bool defaultValue)
         {
             try
             {
@@ -178,31 +191,196 @@
             }
         }
 
-        public JPair last()
+        public JPair LastItem()
         {
             return content.Last();
         }
 
-        public JPair first()
+        public JPair FirstItem()
         {
             return content.First();
+        }
+
+        public List<JPair> GetItems()
+        {
+            return content;
+        }
+
+        #endregion
+
+        #region Get Values
+
+        public int GetValue(int index)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        public int? GetValueOrNull(int index)
+        {
+            try
+            {
+                return content.ElementAt(index).Value ?? null;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return null;
+            }
+        }
+
+        public JObject GetValue(int index, JObject defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public JArray GetValue(int index, JArray defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public string GetValue(int index, string defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public byte GetValue(int index, byte defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public short GetValue(int index, short defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public int GetValue(int index, int defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public long GetValue(int index, long defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public float GetValue(int index, float defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public double GetValue(int index, double defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public decimal GetValue(int index, decimal defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public bool GetValue(int index, bool defaultValue)
+        {
+            try
+            {
+                return content.ElementAt(index).Value;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return defaultValue;
+            }
         }
 
         #endregion
 
         #region Mange methods
 
-        public int size()
+        public int Size()
         {
             return content.Count;
         }
 
-        public List<JPair> toList()
+        public List<JPair> ToList()
         {
             return content;
         }
 
-        public JPair[] toArray()
+        public JPair[] ToArray()
         {
             return content.ToArray();
         }
@@ -306,8 +484,13 @@
             content.Add(p);
             return p;
         }
-
-        public JPair Add(object value)
+        public JPair Add(double value)
+        {
+            JPair p = new JPair(null, value);
+            content.Add(p);
+            return p;
+        }
+        public JPair Add(decimal value)
         {
             JPair p = new JPair(null, value);
             content.Add(p);

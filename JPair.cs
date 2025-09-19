@@ -1,4 +1,5 @@
 ﻿using OpenLab.GeJSON.parser;
+using OpenLab.GeJSON.validator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace OpenLab.GeJSON
         #region Variables
 
         public string? Key { get; }
-        public dynamic Value { get; set; }
+        public dynamic? Value { get; set; }
 
         #endregion
 
@@ -22,6 +23,7 @@ namespace OpenLab.GeJSON
         public JPair(string key)
         {
             this.Key = key;
+            this.Value = null;
         }
 
         public JPair()
@@ -67,7 +69,12 @@ namespace OpenLab.GeJSON
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, object value)
+        public JPair(string key, double value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public JPair(string key, decimal value)
         {
             this.Key = key;
             this.Value = value;
@@ -75,7 +82,7 @@ namespace OpenLab.GeJSON
 
         #endregion
 
-        #region Type
+            #region Type
 
         public JType GetJsonType()
         {
@@ -157,6 +164,8 @@ namespace OpenLab.GeJSON
         public Token ParserToken { get; set; }
 
         #endregion
+
+        #region Conversion
 
         public string Minify()
         {
@@ -275,5 +284,6 @@ namespace OpenLab.GeJSON
             }
             return s;
         }
+        #endregion 
     }
 }

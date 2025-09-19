@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenLab.GeJSON.validator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OpenLab.GeJSON.parser
 {
-    public class Parser
+    public class Parser<T> 
     {
         public Lexer _lexer {  get; set; }
         private Token _currentToken {  get; set; }
@@ -40,7 +41,18 @@ namespace OpenLab.GeJSON.parser
                 case TokenKind.BooleanLiteral:
                     return _currentToken.literal;
                 case TokenKind.OpenCurlyBrace: // {
-                    return MakeJObject();
+                    if (typeof(T) == typeof(JObject))
+                    {
+                        return MakeJObject();
+                    }
+                    else if (typeof(T) == typeof(JSchema))
+                    {
+                        return MakeJSchema();
+                    }
+                    else
+                    {
+                        throw new Exception("Type passed to Parser is wrong. Can be JObject or JSchema");
+                    }
                 case TokenKind.OpenSquareBrace: // [
                     return MakeJArray();
                 default:
@@ -53,7 +65,7 @@ namespace OpenLab.GeJSON.parser
             JArray a = new JArray();
             while (_currentToken.kind != TokenKind.CloseSquareBrace)
             {
-                JPair p = a.Add(Parse());
+                JPair p = a.Add(Parse());  
                 p.ParserToken = _currentToken;
                 Next();
             }
@@ -65,6 +77,25 @@ namespace OpenLab.GeJSON.parser
             JObject o = new JObject();
             while (_currentToken.kind != TokenKind.CloseCurlyBruce)
             {
+                var key = Parse();
+                if (_nextToken.kind != TokenKind.Colon) throw new Exception($"Expected a colon char, found {_nextToken.literal}. Line {_nextToken.lineNumber}, char: {_nextToken._charInLinePos}");
+
+                Next(); 
+                var value = Parse();
+                JPair p = o.Add(key, value);
+                p.ParserToken = _currentToken;
+                Next();
+            }
+
+            return o;
+        }
+
+        private JSchema MakeJSchema()
+        {
+            JSchema o = new JSchema();
+            while (_currentToken.kind != TokenKind.CloseCurlyBruce)
+            {
+                
                 var key = Parse();
                 if (_nextToken.kind != TokenKind.Colon) throw new Exception($"Expected a colon char, found {_nextToken.literal}. Line {_nextToken.lineNumber}, char: {_nextToken._charInLinePos}");
 
