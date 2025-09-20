@@ -246,13 +246,13 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public dynamic? GetValue(string key)
+        public dynamic GetValue(string key)
         {
             try
             {
                 return content.Find(r => r.Key == key).Value;
             }
-            catch (ArgumentNullException)
+            catch
             {
                 throw;
             }
@@ -431,7 +431,7 @@ namespace OpenLab.GeJSON
         public decimal Get(string key, decimal defaultvalue) => GetValue(key, defaultvalue);
         public bool Get(string key, bool defaultvalue) => GetValue(key, defaultvalue);
 
-        public dynamic Get(string key ) => GetValue(key);
+        public dynamic Get( string key ) => GetValue(key);
 
         #endregion
 
