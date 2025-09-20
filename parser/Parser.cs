@@ -71,8 +71,11 @@ namespace OpenLab.GeJSON.parser
             JArray a = new JArray();
             while (_currentToken.kind != TokenKind.CloseSquareBrace)
             {
-                JPair p = a.Add(Parse());  
-                p.ParserToken = _currentToken;
+                if (_nextToken.kind != TokenKind.CloseSquareBrace)
+                {
+                    JPair p = a.Add(Parse());
+                    p.ParserToken = _currentToken;
+                }
                 Next();
             }
             return a;
