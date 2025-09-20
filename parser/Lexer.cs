@@ -11,11 +11,12 @@ namespace OpenLab.GeJSON.parser
     {
         string _rawJson { get; }
 
-        private int _position;
-        private char _currentChar;
-        private char _nextChar;
-        private int _lineNumber=1;
-        private int _charInLinePos=1;
+        int _position;
+        char _currentChar;
+        char _nextChar;
+        int _lineNumber=1;
+        int _charInLinePos=1;
+        bool scentificNotationConvertionEnabled = true;
         public Lexer(string rawJson)
         {
             _rawJson = rawJson ?? throw new ArgumentException(nameof(rawJson));
@@ -253,5 +254,14 @@ namespace OpenLab.GeJSON.parser
             var literal = _rawJson.Substring(currentPos, _position - currentPos);
             return new Token(TokenKind.StringLiteral, literal, _lineNumber, _charInLinePos);
         }
+
+        #region option
+
+        public void scentificNotationConvertionEnable(bool val = true)
+        {
+            scentificNotationConvertionEnabled = val;
+        }
+
+        #endregion
     }
 }

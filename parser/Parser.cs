@@ -10,19 +10,25 @@ namespace OpenLab.GeJSON.parser
 {
     public class Parser<T> 
     {
+        #region Variable 
+
         public Lexer _lexer {  get; set; }
         private Token _currentToken {  get; set; }
         private Token _nextToken { get; set; }
 
-        public Parser(Lexer lexer)
-        {
-            _lexer = lexer;
+        #endregion 
 
-            _currentToken=new Token(TokenKind.EOF,'\0');
+        public Parser(string jsonString)
+        {
+            _lexer = new Lexer(jsonString);
+
+            _currentToken = new Token(TokenKind.EOF, '\0');
             _nextToken = new Token(TokenKind.EOF, '\0');
 
             Next();
         }
+
+        
 
         public void Next()
         {
@@ -108,5 +114,18 @@ namespace OpenLab.GeJSON.parser
 
             return o;
         }
+        
+        #region Option
+
+        /// <summary>
+        /// Enable/disable the convertion of number in scientific notation
+        /// </summary>
+        /// <param name="val">True to enable or false</param>
+        public void enableScientificNotationConvertion(bool val = true)
+        {
+            _lexer.scentificNotationConvertionEnable(val);
+        }
+
+        #endregion
     } 
 }
