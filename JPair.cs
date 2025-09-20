@@ -82,7 +82,7 @@ namespace OpenLab.GeJSON
 
         #endregion
 
-            #region Type
+        #region Type
 
         public JType GetJsonType()
         {
@@ -163,6 +163,72 @@ namespace OpenLab.GeJSON
 
         public Token ParserToken { get; set; }
 
+        #endregion
+
+        #region Get
+        public JPair getProperty(string key)
+        {
+            if(GetJsonType() == JType.Object)
+            {
+                if(Value == null)
+                {
+                    throw new Exception("The value for key " + Key + " is null, is not possible find inner object that have a property with key " + key);
+                }
+
+                try
+                {
+                    JPair p = ((JObject)Value).GetProperty(key);
+                    if (p != null)
+                    {
+                        throw new Exception("The property with "+Key+" not have inner object that have a property with key "+key);
+                    }
+                    else
+                    {
+                        return p;
+                    }
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new Exception("Trying to get inner object property, with key " + key + ", on a value(key: " + Key + ") that not is an json object");
+            }
+        }
+
+        public JPair getItem(int index) 
+        {
+            if (GetJsonType() == JType.Array)
+            {
+                if (Value == null)
+                {
+                    throw new Exception("The value for key " + Key + " is null, is not possible find inner array item with index " + index);
+                }
+
+                try
+                {
+                    JPair p = ((JArray)Value).GetItem(index);
+                    if (p != null)
+                    {
+                        throw new Exception("The property with " + Key + " not have inner array with item index " + index);
+                    }
+                    else
+                    {
+                        return p;
+                    }
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new Exception("Trying to get inner array item, with index " + index + ", on a value(key: " + Key + ") that not is an json array");
+            }
+        }
         #endregion
 
         #region Conversion
