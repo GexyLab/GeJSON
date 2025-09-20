@@ -70,8 +70,7 @@ namespace OpenLab.GeJSON
         {
             rawJson = rawJson ?? throw new ArgumentNullException(nameof(rawJson));
 
-            var _lexer = new Lexer(rawJson);
-            var _parser = new Parser<JSchema>(_lexer);
+            var _parser = new Parser<JObject>(rawJson);
 
             JObject j  = _parser.Parse() as JObject ?? new JObject();
             content = j.GetProperties();
@@ -417,6 +416,35 @@ namespace OpenLab.GeJSON
                 return defaultValue;
             }
         }
+
+        #endregion
+
+        #region get alias
+
+        public dynamic? GetOrNull(string key) => GetValueOrNull(key);
+        public JObject Get(string key, JObject defaultvalue) => GetValue(key, defaultvalue);
+        public JArray Get(string key, JArray defaultvalue) => GetValue(key, defaultvalue);
+        public string Get(string key, string defaultvalue) => GetValue(key, defaultvalue);
+        public byte Get(string key, byte defaultvalue) => GetValue(key, defaultvalue);
+        public float Get(string key, float defaultvalue) => GetValue(key, defaultvalue);
+        public double Get(string key, double defaultvalue) => GetValue(key, defaultvalue);
+        public decimal Get(string key, decimal defaultvalue) => GetValue(key, defaultvalue);
+        public bool Get(string key, bool defaultvalue) => GetValue(key, defaultvalue);
+
+        public dynamic Get(string key ) => GetValue(key);
+
+        #endregion
+
+        #region set alias
+
+        public JObject Set(string key, JObject value) {  return (GetProperty(key).Value = value); }
+        public JArray Set(string key, JArray value) { return (GetProperty(key).Value = value); }
+        public string Set(string key, string value) { return (GetProperty(key).Value = value); }
+        public byte Set(string key, byte value) { return (GetProperty(key).Value = value); }
+        public float Set(string key, float value) { return (GetProperty(key).Value = value); }
+        public double Set(string key, double value) { return (GetProperty(key).Value = value); }
+        public decimal Set(string key, decimal value) { return (GetProperty(key).Value = value); }
+        public bool Set(string key, bool value) { return (GetProperty(key).Value = value); }
 
         #endregion
 
