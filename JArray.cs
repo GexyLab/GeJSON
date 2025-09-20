@@ -368,6 +368,33 @@
 
         #endregion
 
+        #region get alias
+
+        public dynamic? GetOrNull(int index) => GetValueOrNull(index);
+        public JObject Get(int index, JObject defaultvalue) => GetValue(index, defaultvalue);
+        public JArray Get(int index, JArray defaultvalue) => GetValue(index, defaultvalue);
+        public string Get(int index, string defaultvalue) => GetValue(index, defaultvalue);
+        public byte Get(int index, byte defaultvalue) => GetValue(index, defaultvalue);
+        public float Get(int index, float defaultvalue) => GetValue(index, defaultvalue);
+        public double Get(int index, double defaultvalue) => GetValue(index, defaultvalue);
+        public decimal Get(int index, decimal defaultvalue) => GetValue(index, defaultvalue);
+        public bool Get(int index, bool defaultvalue) => GetValue(index, defaultvalue);
+
+        #endregion
+
+        #region set alias
+
+        public JObject Set(int index, JObject value) { return (GetItem(index).Value = value); }
+        public JArray Set(int index, JArray value) { return (GetItem(index).Value = value); }
+        public string Set(int index, string value) { return (GetItem(index).Value = value); }
+        public byte Set(int index, byte value) { return (GetItem(index).Value = value); }
+        public float Set(int index, float value) { return (GetItem(index).Value = value); }
+        public double Set(int index, double value) { return (GetItem(index).Value = value); }
+        public decimal Set(int index, decimal value) { return (GetItem(index).Value = value); }
+        public bool Set(int index, bool value) { return (GetItem(index).Value = value); }
+
+        #endregion
+
         #region Mange methods
 
         public int Size()
