@@ -99,7 +99,7 @@ namespace OpenLab.GeJSON
                 }
                 else
                 {
-                    throw new ElementNotFoundException("Property with key " + key + " not found");
+                    throw new ElementNotFoundException(this,"Property with key " + key + " not found");
                 }
             }
             catch 
@@ -323,7 +323,7 @@ namespace OpenLab.GeJSON
                 }
                 else
                 {
-                    throw new ElementNotFoundException("Element with key " + key + " not found");
+                    throw new ElementNotFoundException(this,"Element with key " + key + " not found");
                 }
             }
             catch
