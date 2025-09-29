@@ -16,7 +16,7 @@ namespace OpenLab.GeJSON.validator
 
         #region Object
 
-        public bool Validate(JObject src, JSchema schema) {
+        public bool Validate(JObject src, JSchema schema, bool debug=false) {
             // ****************************************************************************************************
             // Elaborazione dello schema
             // ****************************************************************************************************
@@ -25,15 +25,11 @@ namespace OpenLab.GeJSON.validator
 
             //type
             // ----------------------------------------------------------------
+            JType type;
             try
             {
-                JType type = convertTypeString(schema.Get("type"));
-                if (type != JType.Object)
-                {
-                    ValidatorException ex = new ValidatorException("The type is wrong, expected object but it's " + type);
-                    ex.jsonEntity = src;
-                    throw ex;
-                }
+                type = convertTypeString(schema.Get("type"));
+                
             }
             catch (ElementNotFoundException)
             {
@@ -56,8 +52,6 @@ namespace OpenLab.GeJSON.validator
                         additionalPropertiesType = convertTypeString(additionalPropertiesDef.Get("type"));
                     }
                 }
-
-
             }
             else
             {
@@ -93,11 +87,21 @@ namespace OpenLab.GeJSON.validator
 
             // properties
             // ----------------------------------------------------------------
-            JSchema schemaProperties = new JSchema(schema.Get("properties", new JObject()));
+            JSchema schemaProperties = new JSchema(schema.Get("properties", new JSchema()));
 
             // ****************************************************************************************************
             // verifica 
             // ****************************************************************************************************
+
+            /* --------------------------------------------------------------------------
+             * Verifica type
+             ------------------------------------------------------------------------- */
+            if (type != JType.Object)
+            {
+                ValidatorException ex = new ValidatorException("The type is wrong, expected object but it's " + type);
+                ex.jsonEntity = src;
+                throw ex;
+            }
 
             /* --------------------------------------------------------------------------
             * verifica additionalProperties
@@ -140,24 +144,25 @@ namespace OpenLab.GeJSON.validator
                     throw ex;
                 }
             }
-
-            
-
+ 
             // ===========================================================================================================================================
 
             foreach (JPair p in src.GetProperties())
             {
+                // check if p is additional property or not
+                if (!schemaProperties.Contains(p.Key)) { continue; }
+
                 if(p.GetJsonType() == JType.Object)
                 {
-                    Validate(p.Value, schemaProperties);
+                    Validate(p.Value, new JSchema(schemaProperties.Get(p.Key)));
                 }
                 else if (p.GetJsonType() == JType.Array)
                 {
-                    Validate(p.Value, schemaProperties);
+                    Validate(p.Value, new JSchema(schemaProperties.Get(p.Key)));
                 }
                 else
                 {
-                    Validate(p, schemaProperties);
+                    Validate(p, new JSchema(schemaProperties.Get(p.Key)));
                 }
             }
 
@@ -191,12 +196,16 @@ namespace OpenLab.GeJSON.validator
 
             //type
             // ----------------------------------------------------------------
-            JType type = convertTypeString(schema.Get("type"));
-            if (type != JType.Array)
+            JType type;
+            try
             {
-                ValidatorException ex = new ValidatorException("The type is wrong, expected array but it's " + type);
-                ex.jsonEntity = src;
-                throw ex;
+                type = convertTypeString(schema.Get("type"));
+
+            }
+            catch (ElementNotFoundException)
+            {
+                Console.WriteLine(schema.ToString());
+                throw new Exception("Schema error: Parameter \"Type\" is required for node " + src.GetItem(0).ToString(false));
             }
             
             // minProperties e maxPropeties
@@ -213,6 +222,16 @@ namespace OpenLab.GeJSON.validator
             // ****************************************************************************************************
 
             /* --------------------------------------------------------------------------
+             * verifica type
+             * ----------------------------------------------------------------------- */
+            if (type != JType.Array)
+            {
+                ValidatorException ex = new ValidatorException("The type is wrong, expected array but it's " + type);
+                ex.jsonEntity = src;
+                throw ex;
+            }
+
+            /* --------------------------------------------------------------------------
              * verifica minProperties e maxProperties
              * ----------------------------------------------------------------------- */
             if (minItems > 0 && src.Size() < minItems)
@@ -227,24 +246,6 @@ namespace OpenLab.GeJSON.validator
                 ValidatorException ex = new ValidatorException("The items of this array are too many, expected " + maxItems);
                 ex.jsonEntity = src;
                 throw ex;
-            }
-
-            // ===========================================================================================================================================
-
-            foreach (JPair p in src.GetItems())
-            {
-                if (p.GetJsonType() == JType.Object)
-                {
-                    Validate(p.Value, schema.Get("properties"));
-                }
-                else if (p.GetJsonType() == JType.Array)
-                {
-                    Validate(p.Value, schema);
-                }
-                else
-                {
-                    Validate(p, schema);
-                }
             }
 
             return true;
