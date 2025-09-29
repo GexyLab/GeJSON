@@ -17,7 +17,7 @@ namespace OpenLab.GeJSON.validator
 
         #region Object
 
-        public bool Validate(JObject src, JSchema schema, bool debug=false) {
+        public void Validate(JObject src, JSchema schema, bool debug=false) {
             // ****************************************************************************************************
             // Elaborazione dello schema
             // ****************************************************************************************************
@@ -193,16 +193,13 @@ namespace OpenLab.GeJSON.validator
                     src.Add(p.Key, dfl.Value);
                 }
             }*/
-
-
-            return true;
         }
 
         #endregion
 
         #region Array
 
-        public bool Validate(JArray src, JSchema schema)
+        public void Validate(JArray src, JSchema schema)
         {
             // ****************************************************************************************************
             // Elaborazione dello schema
@@ -263,15 +260,13 @@ namespace OpenLab.GeJSON.validator
                 ex.jsonEntity = src;
                 throw ex;
             }
-
-            return true;
         }
 
         #endregion
 
         #region property
 
-        public bool Validate(JPair src, JSchema schema)
+        public void Validate(JPair src, JSchema schema)
         {
             // ****************************************************************************************************
             // Elaborazione dello schema
@@ -305,7 +300,6 @@ namespace OpenLab.GeJSON.validator
                 }
             }
         
-            return true;
         }
 
         #endregion

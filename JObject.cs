@@ -723,7 +723,7 @@ namespace OpenLab.GeJSON
 
         public string schemaTitle;
         public string schemaDescription;
-        public bool Validate(JSchema schema)
+        public void Validate(JSchema schema)
         {
             Validator validator = new Validator();
             try
