@@ -1,4 +1,5 @@
 ﻿using OpenLab.GeJSON;
+using OpenLab.GeJSON.error;
 using OpenLab.GeJSON.validator;
 
 namespace OpenLab.GeJSON.validator
@@ -26,7 +27,7 @@ namespace OpenLab.GeJSON.validator
             // ----------------------------------------------------------------
             try
             {
-                JType type = convertTypeString(schema.GetValue("type"));
+                JType type = convertTypeString(schema.Get("type"));
                 if (type != JType.Object)
                 {
                     ValidatorException ex = new ValidatorException("The type is wrong, expected object but it's " + type);
@@ -34,9 +35,9 @@ namespace OpenLab.GeJSON.validator
                     throw ex;
                 }
             }
-            catch (ArgumentNullException)
+            catch (ElementNotFoundException)
             {
-                throw new Exception("Schema error: Parameter \"Type\" is required for node " + src.GetProperties().ElementAt(0).ToString());
+                throw new Exception("Schema error: Parameter \"Type\" is required for node " + src.GetProperties().ElementAt(0).ToString(false));
             }
 
             //additionalProperties
@@ -44,19 +45,23 @@ namespace OpenLab.GeJSON.validator
             if (schema.GetProperty("additionalProperties", "").GetJsonType() == JType.Object)
             {
                 additionalPropertiesEnabled = true;
-                JObject? additionalPropertiesDef = schema.GetValue("additionalProperties");
 
-                if (additionalPropertiesDef.Get("type") != null)
+                JObject? additionalPropertiesDef = schema.Get("additionalProperties",null);
+
+                if (additionalPropertiesDef != null)
                 {
-                    // è specificato il tipo di dato che devono avere le proprietà non esplicitamente dichiarate nello schema
-                    additionalPropertiesType = convertTypeString(additionalPropertiesDef.Get("type"));
+                    if (additionalPropertiesDef.Contains("type"))
+                    {
+                        // è specificato il tipo di dato che devono avere le proprietà non esplicitamente dichiarate nello schema
+                        additionalPropertiesType = convertTypeString(additionalPropertiesDef.Get("type"));
+                    }
                 }
 
 
             }
             else
             {
-                additionalPropertiesEnabled = schema.GetValue("additionalProperties", true);
+                additionalPropertiesEnabled = schema.Get("additionalProperties", true);
             }
 
             // additional properties list
@@ -65,18 +70,18 @@ namespace OpenLab.GeJSON.validator
 
             // minProperties e maxPropeties
             // ----------------------------------------------------------------
-            int minPropeties = schema.GetValue("minProperties", 0);
-            int maxPropeties = schema.GetValue("maxProperties", 0);
+            int minPropeties = schema.Get("minProperties", 0);
+            int maxPropeties = schema.Get("maxProperties", 0);
 
             // required
             // ----------------------------------------------------------------
-            JArray requiredProperties = schema.GetValue("required", new JArray());
+            JArray requiredProperties = schema.Get("required", new JArray());
             
 
 
             // nullable
             // ----------------------------------------------------------------
-            bool nullable = schema.GetValue("nullable", true);
+            bool nullable = schema.Get("nullable", true);
 
             // default
             // ----------------------------------------------------------------
@@ -88,7 +93,7 @@ namespace OpenLab.GeJSON.validator
 
             // properties
             // ----------------------------------------------------------------
-            JSchema schemaProperties = new JSchema(schema.GetValue("properties", new JObject()));
+            JSchema schemaProperties = new JSchema(schema.Get("properties", new JObject()));
 
             // ****************************************************************************************************
             // verifica 
@@ -181,8 +186,8 @@ namespace OpenLab.GeJSON.validator
             // ****************************************************************************************************
             // Elaborazione dello schema
             // ****************************************************************************************************
-            string title = schema.GetValue("title", "");
-            string description = schema.GetValue("descripion", "");
+            string title = schema.Get("title", "");
+            string description = schema.Get("descripion", "");
 
             //type
             // ----------------------------------------------------------------
@@ -196,12 +201,12 @@ namespace OpenLab.GeJSON.validator
             
             // minProperties e maxPropeties
             // ----------------------------------------------------------------
-            int minItems = schema.GetValue("minItems", 0);
-            int maxItems = schema.GetValue("maxItems", 0);
+            int minItems = schema.Get("minItems", 0);
+            int maxItems = schema.Get("maxItems", 0);
 
             // properties
             // ----------------------------------------------------------------
-            JObject schemaItems = schema.GetValue("items", new JObject());
+            JObject schemaItems = schema.Get("items", new JObject());
 
             // ****************************************************************************************************
             // verifica 
@@ -230,7 +235,7 @@ namespace OpenLab.GeJSON.validator
             {
                 if (p.GetJsonType() == JType.Object)
                 {
-                    Validate(p.Value, schema.GetValue("properties"));
+                    Validate(p.Value, schema.Get("properties"));
                 }
                 else if (p.GetJsonType() == JType.Array)
                 {
@@ -254,8 +259,8 @@ namespace OpenLab.GeJSON.validator
             // ****************************************************************************************************
             // Elaborazione dello schema
             // ****************************************************************************************************
-            string title = schema.GetValue("title", "");
-            string description = schema.GetValue("descripion", "");
+            string title = schema.Get("title", "");
+            string description = schema.Get("descripion", "");
 
             //type
             // ----------------------------------------------------------------
@@ -274,7 +279,7 @@ namespace OpenLab.GeJSON.validator
             }
             else
             {
-                JType type = convertTypeString(schema.GetValue("type"));
+                JType type = convertTypeString(schema.Get("type"));
                 if (type != src.GetJsonType())
                 {
                     ValidatorException ex = new ValidatorException("The type is wrong, expected " + type + " but it's " + src.GetJsonType());
