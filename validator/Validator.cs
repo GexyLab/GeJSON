@@ -8,6 +8,7 @@ namespace OpenLab.GeJSON.validator
     {
         #region Variables
 
+        string currentKey = "";
         bool additionalPropertiesEnabled = true;
         JType? additionalPropertiesType = null;
         List<JPair> additionalProperties = new List<JPair> ();
@@ -108,8 +109,9 @@ namespace OpenLab.GeJSON.validator
             * ------------------------------------------------------------------------ */
             if (!additionalPropertiesEnabled && additionalProperties.Count > 0)
             {
+                
                 // se additionalProperties = false && proprietà sorgente > proprietà schema
-                ValidatorException ex = new ValidatorException("Node not permit additional properties");
+                ValidatorException ex = new ValidatorException("object "+currentKey+" not permit additional properties");
                 ex.jsonEntity = src;
                 throw ex;
             }
@@ -151,6 +153,8 @@ namespace OpenLab.GeJSON.validator
             {
                 // check if p is additional property or not
                 if (!schemaProperties.Contains(p.Key)) { continue; }
+
+                currentKey = p.Key;
 
                 if(p.GetJsonType() == JType.Object)
                 {
