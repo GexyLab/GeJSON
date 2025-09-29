@@ -10,6 +10,11 @@ namespace OpenLab.GeJSON.validator
     public class JSchema : JObject
     {
         public JSchema() { }
+
+        public JSchema(JObject obj) {
+
+            content = obj.GetProperties();
+        }
         public JSchema(string rawJson) : base(rawJson)
         {
         }
