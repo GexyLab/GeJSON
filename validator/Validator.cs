@@ -61,7 +61,19 @@ namespace OpenLab.GeJSON.validator
 
             // additional properties list
             // ----------------------------------------------------------------
-            additionalProperties = src.GetProperties().Except(schema.GetProperties()).ToList();
+            additionalProperties = new List<JPair> ();
+            foreach (JPair p in src.GetProperties())
+            {
+                if (schema.Get("properties",null) != null) {
+                    // se è null, non c'è l'oggetto properties nello schema, perchè non vengono definite proprietà(nello schema)
+                    if (!schema.Get("properties").Contains(p.Key))
+                    {
+                        additionalProperties.Add(p);
+                    }
+                }
+            }
+      
+            Console.WriteLine(additionalProperties.Count());
 
             // minProperties e maxPropeties
             // ----------------------------------------------------------------

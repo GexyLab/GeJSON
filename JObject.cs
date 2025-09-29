@@ -316,7 +316,7 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                var p = content.Find(r => r.Key == key);
+                var p = Find(key);
                 if (p != null)
                 {
                     return p.Value;
