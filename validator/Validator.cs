@@ -19,8 +19,8 @@ namespace OpenLab.GeJSON.validator
             // ****************************************************************************************************
             // Elaborazione dello schema
             // ****************************************************************************************************
-            string title = schema.GetValue("title", "");
-            string description = schema.GetValue("descripion", "");
+            string title = schema.Get("title", "");
+            string description = schema.Get("descripion", "");
 
             //type
             // ----------------------------------------------------------------
@@ -44,12 +44,12 @@ namespace OpenLab.GeJSON.validator
             if (schema.GetProperty("additionalProperties", "").GetJsonType() == JType.Object)
             {
                 additionalPropertiesEnabled = true;
-                JObject additionalPropertiesDef = schema.GetValue("additionalProperties");
+                JObject? additionalPropertiesDef = schema.GetValue("additionalProperties");
 
-                if (additionalPropertiesDef.GetValueOrNull("type") != null)
+                if (additionalPropertiesDef.Get("type") != null)
                 {
                     // è specificato il tipo di dato che devono avere le proprietà non esplicitamente dichiarate nello schema
-                    additionalPropertiesType = convertTypeString(additionalPropertiesDef.GetValueOrNull("type"));
+                    additionalPropertiesType = convertTypeString(additionalPropertiesDef.Get("type"));
                 }
 
 
@@ -83,12 +83,12 @@ namespace OpenLab.GeJSON.validator
             JObject? defaultValue;
             if (schema.Contains("default"))
             {
-                defaultValue = schema.GetValueOrNull("default");
+                defaultValue = schema.Get("default");
             }
 
             // properties
             // ----------------------------------------------------------------
-            JSchema schemaProperties = (JSchema)schema.GetValue("properties", new JObject());
+            JSchema schemaProperties = new JSchema(schema.GetValue("properties", new JObject()));
 
             // ****************************************************************************************************
             // verifica 
@@ -130,7 +130,7 @@ namespace OpenLab.GeJSON.validator
             {
                 if (!src.Contains(requiredKey.Value))
                 {
-                    ValidatorException ex = new ValidatorException("The property with key " + requiredKey + " is required, but is not present");
+                    ValidatorException ex = new ValidatorException("The property with key " + requiredKey.Value + " is required, but is not present");
                     ex.jsonEntity = src;
                     throw ex;
                 }
@@ -186,7 +186,7 @@ namespace OpenLab.GeJSON.validator
 
             //type
             // ----------------------------------------------------------------
-            JType type = convertTypeString(schema.GetValueOrNull("type"));
+            JType type = convertTypeString(schema.Get("type"));
             if (type != JType.Array)
             {
                 ValidatorException ex = new ValidatorException("The type is wrong, expected array but it's " + type);

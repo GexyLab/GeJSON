@@ -1,4 +1,5 @@
 ﻿
+using OpenLab.GeJSON.error;
 using OpenLab.GeJSON.parser;
 using OpenLab.GeJSON.validator;
 
@@ -82,49 +83,50 @@ namespace OpenLab.GeJSON
         #region Get property
 
         /// <summary>
-        /// Return JPair that conain key and value of propertie, selected by key
+        /// Return JPair that conain key and value of propertie, selected by key. If element not found fire the ElementNotFound exception
         /// </summary>
         /// <param name="key">String represent the key of property</param>
-        /// <returns>Return the JPair that contain data or null if not exist</returns>
-        /// <exception cref="ArgumentNullException">If object not contain property with the key which has been specified</exception>
+        /// <returns></returns>
+        /// <exception cref="ElementNotFoundException">If object not contain property with the key which has been specified</exception>
         public JPair GetProperty(string key)
         {
             try
             {
-                return content.Find(r => r.Key == key);
+                var p = Find(key);
+                if(p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    throw new ElementNotFoundException("Property with key " + key + " not found");
+                }
             }
-            catch (ArgumentNullException)
+            catch 
             {
                 throw;
             }
         }
 
-        /// <summary>
-        /// Return the JPair that contain key and value of property requeste by it's key. If the key not exist return null
-        /// </summary>
-        /// <param name="key">The key string of the property</param>
-        /// <returns>Return JPair that contain data or null</returns>
-        public JPair? GetPropertyOrNull(string key)
-        {
-            try
-            {
-                return content.Find(r => r.Key == key) ?? null;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-        }
+        
 
         public JPair GetProperty(string key, JObject defaultValue) 
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key,defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -132,11 +134,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -144,11 +154,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -156,11 +174,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -168,11 +194,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -180,11 +214,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -193,11 +235,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -205,11 +255,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -217,11 +275,19 @@ namespace OpenLab.GeJSON
         {
             try
             {
-                return content.Find(r => r.Key == key) ?? new JPair(key, defaultValue);
+                var p = Find(key);
+                if (p != null)
+                {
+                    return p;
+                }
+                else
+                {
+                    return new JPair(key, defaultValue);
+                }
             }
-            catch (Exception)
+            catch
             {
-                return new JPair(key, defaultValue);
+                throw;
             }
         }
 
@@ -234,23 +300,31 @@ namespace OpenLab.GeJSON
 
         #region get values
 
-        public dynamic? GetValueOrNull(string key)
+        private JPair? Find(string key)
         {
-            try
+            foreach (var item in content)
             {
-                return content.Find(r => r.Key == key).Value ?? null;
+                if(item.Key == key)
+                {
+                    return item;
+                }
             }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
+            return null;
         }
 
-        public dynamic GetValue(string key)
+        public dynamic? GetValue(string key)
         {
             try
             {
-                return content.Find(r => r.Key == key).Value;
+                var p = content.Find(r => r.Key == key);
+                if (p != null)
+                {
+                    return p.Value;
+                }
+                else
+                {
+                    throw new ElementNotFoundException("Element with key " + key + " not found");
+                }
             }
             catch
             {
@@ -258,162 +332,19 @@ namespace OpenLab.GeJSON
             }
         }
 
-        public JObject GetValue(string key, JObject defaultValue)
+        public dynamic? GetValue(string key, dynamic? defaultValue)
         {
             try
             {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
+                return GetValue(key);
             }
-            catch (Exception)
+            catch (ElementNotFoundException)
             {
                 return defaultValue;
             }
-        }
-
-        public JArray GetValue(string key, JArray defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
             catch (Exception)
             {
-                return defaultValue;
-            }
-        }
-
-        public string GetValue(string key, string defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null) {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        public byte GetValue(string key, byte defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        public float GetValue(string key, float defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        public double GetValue(string key, double defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        public decimal GetValue(string key, decimal defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        public bool GetValue(string key, bool defaultValue)
-        {
-            try
-            {
-                JPair p = content.FirstOrDefault(r => r.Key == key);
-                if (p != null)
-                {
-                    return p.Value;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-            catch (Exception)
-            {
-                return defaultValue;
+                throw;
             }
         }
 
@@ -421,30 +352,151 @@ namespace OpenLab.GeJSON
 
         #region get alias
 
-        public dynamic? GetOrNull(string key) => GetValueOrNull(key);
-        public JObject Get(string key, JObject defaultvalue) => GetValue(key, defaultvalue);
-        public JArray Get(string key, JArray defaultvalue) => GetValue(key, defaultvalue);
-        public string Get(string key, string defaultvalue) => GetValue(key, defaultvalue);
-        public byte Get(string key, byte defaultvalue) => GetValue(key, defaultvalue);
-        public float Get(string key, float defaultvalue) => GetValue(key, defaultvalue);
-        public double Get(string key, double defaultvalue) => GetValue(key, defaultvalue);
-        public decimal Get(string key, decimal defaultvalue) => GetValue(key, defaultvalue);
-        public bool Get(string key, bool defaultvalue) => GetValue(key, defaultvalue);
-
-        public dynamic Get( string key ) => GetValue(key);
+        public dynamic? Get(string key, dynamic? defaultvalue) => GetValue(key, defaultvalue);
+      
+        public dynamic? Get( string key ) => GetValue(key);
 
         #endregion
 
         #region set alias
 
-        public JObject Set(string key, JObject value) {  return (GetProperty(key).Value = value); }
-        public JArray Set(string key, JArray value) { return (GetProperty(key).Value = value); }
-        public string Set(string key, string value) { return (GetProperty(key).Value = value); }
-        public byte Set(string key, byte value) { return (GetProperty(key).Value = value); }
-        public float Set(string key, float value) { return (GetProperty(key).Value = value); }
-        public double Set(string key, double value) { return (GetProperty(key).Value = value); }
-        public decimal Set(string key, decimal value) { return (GetProperty(key).Value = value); }
-        public bool Set(string key, bool value) { return (GetProperty(key).Value = value); }
+        public JObject Set(string key, JObject? value) {
+            try
+            {
+                var p = GetProperty(key);
+                
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public JArray Set(string key, JArray? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public string Set(string key, string? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public byte Set(string key, byte? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public int Set(string key, int? value)
+        {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public float Set(string key, float? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public double Set(string key, double? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public decimal Set(string key, decimal? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public short Set(string key, short? value)
+        {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public long Set(string key, long? value)
+        {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public bool Set(string key, bool? value) {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         #endregion
 

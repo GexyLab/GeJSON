@@ -32,49 +32,49 @@ namespace OpenLab.GeJSON
             this.Value = null;
         }
 
-        public JPair(string key, JObject value)
+        public JPair(string? key, JObject value)
         {
             this.Key = key;
             this.Value = value;
         }
 
-        public JPair(string key, JArray value)
+        public JPair(string? key, JArray value)
         {
             this.Key = key;
             this.Value = value;
         }
 
-        public JPair(string key, string value)
+        public JPair(string? key, string value)
         {
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, int value)
+        public JPair(string? key, int value)
         {
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, long value)
+        public JPair(string? key, long value)
         {
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, float value)
+        public JPair(string? key, float value)
         {
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, bool value)
+        public JPair(string? key, bool value)
         {
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, double value)
+        public JPair(string? key, double value)
         {
             this.Key = key;
             this.Value = value;
         }
-        public JPair(string key, decimal value)
+        public JPair(string? key, decimal value)
         {
             this.Key = key;
             this.Value = value;

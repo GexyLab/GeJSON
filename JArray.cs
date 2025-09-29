@@ -1,4 +1,6 @@
-﻿namespace OpenLab.GeJSON
+﻿using OpenLab.GeJSON.error;
+
+namespace OpenLab.GeJSON
 {
     public class JArray
     {
@@ -95,37 +97,39 @@
 
         #region Get propertes
 
-        public JPair GetItem(int index)
+        private JPair Find(int index)
         {
             try
             {
                 return content.ElementAt(index);
             }
             catch (ArgumentOutOfRangeException)
+            {
+                throw new ElementNotFoundException(this, index, "Index " + index + " not found in array(" + Size() + " elements)");
+            }
+        }
+       
+        public JPair GetItem(int index)
+        {
+            try
+            {
+                return Find(index);
+            }
+            catch
             {
                 throw;
             }
         }
 
-        public JPair GetItemOrNull(int index)
-        {
-            try
-            {
-                return content.ElementAt(index) ?? null;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return null;
-            }
-        }
+       
 
         public JPair GetItem(int index, JObject defaultValue)
         {
             try
             {
-                return content.ElementAt(index);
+                return Find(index);
             }
-            catch (ArgumentOutOfRangeException)
+            catch 
             {
                 return new JPair(null, defaultValue);
             }
@@ -135,9 +139,9 @@
         {
             try
             {
-                return content.ElementAt(index);
+                return Find(index);
             }
-            catch (ArgumentOutOfRangeException)
+            catch 
             {
                 return new JPair(null, defaultValue);
             }
@@ -147,9 +151,9 @@
         {
             try
             {
-                return content.ElementAt(index);
+                return Find(index);
             }
-            catch (ArgumentOutOfRangeException)
+            catch 
             {
                 return new JPair(null, defaultValue);
             }
@@ -159,9 +163,9 @@
         {
             try
             {
-                return content.ElementAt(index);
+                return Find(index);
             }
-            catch (ArgumentOutOfRangeException)
+            catch 
             {
                 return new JPair(null, defaultValue);
             }
@@ -171,9 +175,9 @@
         {
             try
             {
-                return content.ElementAt(index);
+                return Find(index);
             }
-            catch (ArgumentOutOfRangeException)
+            catch 
             {
                 return new JPair(null, defaultValue);
             }
@@ -183,9 +187,9 @@
         {
             try
             {
-                return content.ElementAt(index);
+                return Find(index);
             }
-            catch (ArgumentOutOfRangeException)
+            catch 
             {
                 return new JPair(null, defaultValue);
             }
@@ -210,157 +214,25 @@
 
         #region Get Values
 
-        public int GetValue(int index)
+        public dynamic? GetValue(int index)
         {
             try
             {
-                return content.ElementAt(index).Value;
+               return Find(index).Value;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ElementNotFoundException)
             {
-                throw;
+                throw new ElementNotFoundException(this, index, "Index "+index+" not found in array("+Size()+" elements)");
             }
         }
 
-        public int? GetValueOrNull(int index)
+        public dynamic? GetValue(int index, dynamic? defaultValue)
         {
             try
             {
-                return content.ElementAt(index).Value ?? null;
+                return Find(index).Value;
             }
-            catch (ArgumentOutOfRangeException)
-            {
-                return null;
-            }
-        }
-
-        public JObject GetValue(int index, JObject defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public JArray GetValue(int index, JArray defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public string GetValue(int index, string defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public byte GetValue(int index, byte defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public short GetValue(int index, short defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public int GetValue(int index, int defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public long GetValue(int index, long defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public float GetValue(int index, float defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public double GetValue(int index, double defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public decimal GetValue(int index, decimal defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return defaultValue;
-            }
-        }
-
-        public bool GetValue(int index, bool defaultValue)
-        {
-            try
-            {
-                return content.ElementAt(index).Value;
-            }
-            catch (ArgumentOutOfRangeException)
+            catch (ElementNotFoundException)
             {
                 return defaultValue;
             }
@@ -370,15 +242,9 @@
 
         #region get alias
 
-        public dynamic? GetOrNull(int index) => GetValueOrNull(index);
-        public JObject Get(int index, JObject defaultvalue) => GetValue(index, defaultvalue);
-        public JArray Get(int index, JArray defaultvalue) => GetValue(index, defaultvalue);
-        public string Get(int index, string defaultvalue) => GetValue(index, defaultvalue);
-        public byte Get(int index, byte defaultvalue) => GetValue(index, defaultvalue);
-        public float Get(int index, float defaultvalue) => GetValue(index, defaultvalue);
-        public double Get(int index, double defaultvalue) => GetValue(index, defaultvalue);
-        public decimal Get(int index, decimal defaultvalue) => GetValue(index, defaultvalue);
-        public bool Get(int index, bool defaultvalue) => GetValue(index, defaultvalue);
+        public dynamic? Get(int index) => GetValue(index);
+        public dynamic? Get(int index, dynamic? defaultvalue) => GetValue(index, defaultvalue);
+        
 
         #endregion
 
