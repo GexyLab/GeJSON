@@ -5,3 +5,5 @@
 /.vs
 /bin
 /obj
+/Properties/PublishProfiles/FolderProfile.pubxml
+/repos.lnk
