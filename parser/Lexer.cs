@@ -236,7 +236,7 @@ namespace OpenLab.GeJSON.parser
                 }
 
                 // non esponenziale
-                Console.WriteLine("double");
+                //Console.WriteLine("double");
                 return new Token(TokenKind.NumericLiteral, double.Parse(_rawJson.Substring(currentPos, _position - currentPos + 1), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), _lineNumber, _charInLinePos);
             }            
         }

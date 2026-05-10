@@ -728,7 +728,7 @@ namespace OpenLab.GeJSON
             Validator validator = new Validator();
             try
             {
-                return validator.Validate(this, schema);
+                validator.Validate(this, schema);
             }
             catch 
             {
