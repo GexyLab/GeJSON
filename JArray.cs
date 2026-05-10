@@ -1,8 +1,9 @@
 ﻿using OpenLab.GeJSON.error;
+using System.Collections;
 
 namespace OpenLab.GeJSON
 {
-    public class JArray
+    public class JArray : IEnumerable<JPair>
     {
         #region Variables
         
@@ -273,11 +274,6 @@ namespace OpenLab.GeJSON
             return content;
         }
 
-        public JPair[] ToArray()
-        {
-            return content.ToArray();
-        }
-
         public dynamic Parent()
         {
             if (parentObject != null)
@@ -474,6 +470,26 @@ namespace OpenLab.GeJSON
             }
             return s;
         }
+
+        /// <summary>
+        /// Return an array of JPair elements with key and value
+        /// </summary>
+        /// <returns></returns>
+        public JPair[] ToArray()
+        {
+            return content.ToArray();
+        }
+
+        public IEnumerator<JPair> GetEnumerator()
+        {
+            return content.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return content.GetEnumerator();
+        }
+
 
         #endregion
     }
