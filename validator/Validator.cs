@@ -73,7 +73,7 @@ namespace OpenLab.GeJSON.validator
                 }
             }
       
-            Console.WriteLine(additionalProperties.Count());
+            //Console.WriteLine(additionalProperties.Count());
 
             // minProperties e maxPropeties
             // ----------------------------------------------------------------
@@ -217,7 +217,7 @@ namespace OpenLab.GeJSON.validator
             }
             catch (ElementNotFoundException)
             {
-                Console.WriteLine(schema.ToString());
+                //Console.WriteLine(schema.ToString());
                 throw new Exception("Schema error: Parameter \"Type\" is required for node " + src.GetItem(0).ToString(false));
             }
             
