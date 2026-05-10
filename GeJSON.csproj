@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>JSON manipulator and Scheme validator</Title>
+    <Authors>Eugenio Liguori</Authors>
+    <Company>Gexy</Company>
+    <Description>Library for manipulating json and json scheme validator</Description>
+    <RootNamespace>OpenLab.GeJSON</RootNamespace>
+    <Copyright>GNU GPL v3</Copyright>
+    <Version>1.2.1</Version>
+  </PropertyGroup>
+
+</Project>
