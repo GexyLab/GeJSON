@@ -433,17 +433,24 @@ namespace OpenLab.GeJSON
             int i = 0;
             foreach (JPair p in content)
             {
-                if (p.Value is JObject)
+                if (deep)
                 {
-                    o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
-                }
-                else if (p.Value is JArray)
-                {
-                    o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
+                    o += p.ToString(deep, leftReturn + 1, spaceChar);
                 }
                 else
                 {
-                    o += p.ToString(deep, leftReturn + 1, spaceChar);
+                    if (p.Value is JObject)
+                    {
+                        o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
+                    }
+                    else if (p.Value is JArray)
+                    {
+                        o += makeLeftReturn(leftReturn + 1, spaceChar) + "\"" + p.Key + "\" : " + p.GetJsonType();
+                    }
+                    else
+                    {
+                        o += p.ToString(deep, leftReturn + 1, spaceChar);
+                    }
                 }
 
                 if (i < content.Count - 1)
@@ -459,6 +466,11 @@ namespace OpenLab.GeJSON
             o += s+"]";
 
             return o;
+        }
+
+        public override string ToString()
+        {
+            return ToString();
         }
 
         private string makeLeftReturn(int leftReturn = 0, string spaceChar = " ")

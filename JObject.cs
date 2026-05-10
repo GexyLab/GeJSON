@@ -705,6 +705,12 @@ namespace OpenLab.GeJSON
             return o;
         }
 
+        public override string ToString()
+        {
+            return ToString();
+        }
+
+
         private string makeLeftReturn(int leftReturn = 0, string spaceChar = " ")
         {
             string s = "";
