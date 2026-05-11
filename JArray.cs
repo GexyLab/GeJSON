@@ -17,7 +17,12 @@ namespace OpenLab.GeJSON
 
         public JArray() { }
 
-        public JArray(JObject content)
+        public JArray(dynamic? content)
+        {
+            Add(content);
+        }
+
+        /*public JArray(JObject content)
         {
             Add(content);
         }
@@ -59,13 +64,18 @@ namespace OpenLab.GeJSON
         public JArray(bool content)
         {
             Add(content);
-        }
+        }*/
 
         #endregion
 
         #region Constructor for add array
 
-        public JArray(JObject[] content)
+        public JArray(dynamic[] content)
+        {
+            foreach (JObject item in content) Add(item);
+        }
+
+        /*public JArray(JObject[] content)
         {
             foreach(JObject item in content) Add(item);
         }
@@ -92,7 +102,7 @@ namespace OpenLab.GeJSON
         public JArray(bool[] content)
         {
             foreach (bool item in content) Add(item);
-        }
+        }*/
 
         #endregion
 
@@ -122,9 +132,20 @@ namespace OpenLab.GeJSON
             }
         }
 
-       
+        public JPair GetItem(int index, dynamic defaultValue)
+        {
+            try
+            {
+                return Find(index);
+            }
+            catch
+            {
+                return new JPair(null, defaultValue);
+            }
+        }
 
-        public JPair GetItem(int index, JObject defaultValue)
+
+        /*public JPair GetItem(int index, JObject defaultValue)
         {
             try
             {
@@ -194,7 +215,7 @@ namespace OpenLab.GeJSON
             {
                 return new JPair(null, defaultValue);
             }
-        }
+        }*/
 
         public JPair LastItem()
         {
@@ -245,20 +266,22 @@ namespace OpenLab.GeJSON
 
         public dynamic? Get(int index) => GetValue(index);
         public dynamic? Get(int index, dynamic? defaultvalue) => GetValue(index, defaultvalue);
-        
+
 
         #endregion
 
         #region set alias
 
-        public JObject Set(int index, JObject value) { return (GetItem(index).Value = value); }
+        public dynamic? Set(int index, dynamic value) { return (GetItem(index).Value = value); }
+
+        /*public JObject Set(int index, JObject value) { return (GetItem(index).Value = value); }
         public JArray Set(int index, JArray value) { return (GetItem(index).Value = value); }
         public string Set(int index, string value) { return (GetItem(index).Value = value); }
         public byte Set(int index, byte value) { return (GetItem(index).Value = value); }
         public float Set(int index, float value) { return (GetItem(index).Value = value); }
         public double Set(int index, double value) { return (GetItem(index).Value = value); }
         public decimal Set(int index, decimal value) { return (GetItem(index).Value = value); }
-        public bool Set(int index, bool value) { return (GetItem(index).Value = value); }
+        public bool Set(int index, bool value) { return (GetItem(index).Value = value); }*/
 
         #endregion
 
@@ -329,7 +352,18 @@ namespace OpenLab.GeJSON
 
         #region Add item
 
-        public JPair Add(JObject value)
+        public JPair Add(dynamic? value)
+        {
+            JPair p = new JPair(null, value);
+            content.Add(p);
+            if (value is JObject || value is JArray)
+            {
+                parentObject = this;
+            }
+            return p;
+        }
+
+        /*public JPair Add(JObject value)
         {
             JPair p = new JPair(null, value);
             content.Add(p);
@@ -384,7 +418,7 @@ namespace OpenLab.GeJSON
             JPair p = new JPair(null, value);
             content.Add(p);
             return p;
-        }
+        }*/
 
         #endregion
 
@@ -491,6 +525,8 @@ namespace OpenLab.GeJSON
         {
             return content.ToArray();
         }
+
+
 
         public IEnumerator<JPair> GetEnumerator()
         {

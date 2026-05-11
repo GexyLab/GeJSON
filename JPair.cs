@@ -32,13 +32,13 @@ namespace OpenLab.GeJSON
             this.Value = null;
         }
 
-        public JPair(string? key, JObject value)
+        public JPair(string? key, dynamic? value)
         {
             this.Key = key;
             this.Value = value;
         }
 
-        public JPair(string? key, JArray value)
+        /*public JPair(string? key, JArray value)
         {
             this.Key = key;
             this.Value = value;
@@ -78,7 +78,7 @@ namespace OpenLab.GeJSON
         {
             this.Key = key;
             this.Value = value;
-        }
+        }*/
 
         #endregion
 
@@ -293,50 +293,77 @@ namespace OpenLab.GeJSON
             string o = "";
             if (Key != null) { o += s+"\"" + Key + "\": "; } else { o += s; }
 
-            switch (GetJsonType())
+            if (Value != null)
             {
-                case JType.Object:
+                if(Value is JObject)
+                {
                     o += n;
-                    o += ((JObject)Value).ToString(deep,leftReturn + 1, spaceChar);
-                    break;
-                case JType.Array:
+                    o += ((JObject)Value).ToString(deep, leftReturn + 1, spaceChar);
+                }
+                else if(Value is JArray)
+                {
                     o += n;
                     o += ((JArray)Value).ToString(deep, leftReturn + 1, spaceChar);
-                    break;
-                case JType.String:
+                }
+                else if(Value is string)
+                {
                     o += "\"" + (string)Value + "\"";
-                    break;
-                case JType.Byte:
-                    o += (byte)Value;
-                    break;
-                case JType.Short:
-                    o += (short)Value;
-                    break;
-                case JType.Integer:
-                    o += (int)Value;
-                    break;
-                case JType.Long:
-                    o += (long)Value;
-                    break;
-                case JType.Float:
-                    o += (float)Value;
-                    break;
-                case JType.Double:
-                    o += (double)Value;
-                    break;
-                case JType.Decimal:
-                    o += (decimal)Value;
-                    break;
-                case JType.Boolean:
-                    o += (bool)Value;
-                    break;
-                case JType.Class:
-                    o += ((object)Value).GetType().ToString();
-                    break;
-                case JType.Unknown:
-                    o += ((object)Value).ToString();
-                    break;
+                }
+                else
+                {
+                    o += Value;
+
+                }
             }
+            else
+            {
+                o += "null";
+            }
+
+                /*switch (GetJsonType())
+                {
+                    case JType.Object:
+                        o += n;
+                        o += ((JObject)Value).ToString(deep, leftReturn + 1, spaceChar);
+                        break;
+                    case JType.Array:
+                        o += n;
+                        o += ((JArray)Value).ToString(deep, leftReturn + 1, spaceChar);
+                        break;
+                    case JType.String:
+                        o += "\"" + (string)Value + "\"";
+                        break;
+                    case JType.Byte:
+                        o += (byte)Value;
+                        break;
+                    case JType.Short:
+                        o += (short)Value;
+                        break;
+                    case JType.Integer:
+                        o += (int)Value;
+                        break;
+                    case JType.Long:
+                        o += (long)Value;
+                        break;
+                    case JType.Float:
+                        o += (float)Value;
+                        break;
+                    case JType.Double:
+                        o += (double)Value;
+                        break;
+                    case JType.Decimal:
+                        o += (decimal)Value;
+                        break;
+                    case JType.Boolean:
+                        o += (bool)Value;
+                        break;
+                    case JType.Class:
+                        o += ((object)Value).GetType().ToString();
+                        break;
+                    case JType.Unknown:
+                        o += ((object)Value).ToString();
+                        break;
+                }*/
 
             return o;
         }

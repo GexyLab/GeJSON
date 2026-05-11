@@ -360,7 +360,35 @@ namespace OpenLab.GeJSON
 
         #region set alias
 
-        public JObject Set(string key, JObject? value) {
+        public dynamic? Set(string key)
+        {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public dynamic? Set(string key, dynamic? value)
+        {
+            try
+            {
+                var p = GetProperty(key);
+
+                return p.Value = value;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /*public JObject Set(string key, JObject? value) {
             try
             {
                 var p = GetProperty(key);
@@ -496,7 +524,7 @@ namespace OpenLab.GeJSON
             {
                 throw;
             }
-        }
+        }*/
 
         #endregion
 
@@ -524,20 +552,31 @@ namespace OpenLab.GeJSON
             if(content.Count == 0) { return true; } else { return false; }
         }
 
-        
+
 
         #endregion
 
         #region Add item
 
-        public JPair Add(string key, JObject value)
+        public JPair Add(string key)
+        {
+            JPair p = new JPair(key, null);
+            content.Add(p);
+            return p;
+        }
+
+        public JPair Add(string key, dynamic? value)
         {
             JPair p = new JPair(key, value);
             content.Add(p);
-            value.parentObject = this;
+
+            if (value is JObject || value is JArray)
+            {
+                value.parentObject = this;
+            }
             return p;
         }
-        public JPair Add(string key, JArray value)
+       /* public JPair Add(string key, JArray value)
         {
             JPair p = new JPair(key, value);
             content.Add(p);
@@ -587,7 +626,7 @@ namespace OpenLab.GeJSON
             JPair p = new JPair(key, value);
             content.Add(p);
             return p;
-        }
+        }*/
        
         #endregion
 
